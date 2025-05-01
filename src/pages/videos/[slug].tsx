@@ -54,7 +54,10 @@ export default function VideoPage({ video, caseData, note, downloads }: VideoPag
         {/* Centered video player with medium size */}
         <div className="flex justify-center mb-4">
             <div className="w-full max-w-xl">
-            <VideoPlayer youtubeId={video.youtubeId} />
+            <VideoPlayer
+                videoId={video._id}
+                youtubeId={video.youtubeId}
+            />
             </div>
         </div>
         
@@ -342,12 +345,12 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   
   if (video.noteId) {
     note = await client.fetch(`
-        *[_type == "note" && _id == $id][0] {
-          _id,
-          title,
-          content
-        }
-      `, { id: video.noteId });
+    *[_type == "note" && _id == $id][0] {
+      _id,
+      title,
+      content
+    }
+  `, { id: video.noteId });
   }
   
   if (video.downloadIds && video.downloadIds.length > 0) {

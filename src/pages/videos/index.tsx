@@ -46,7 +46,8 @@ export const getStaticProps: GetStaticProps = async () => {
       title,
       "slug": slug.current,
       youtubeId,
-      description
+      description,
+      featuredImage
     }
   `);
   

@@ -1,3 +1,4 @@
+// src/pages/index.tsx
 import { GetStaticProps } from 'next';
 import Head from 'next/head';
 import Layout from '@/components/layout/Layout';
@@ -45,7 +46,8 @@ export const getStaticProps: GetStaticProps = async () => {
       title,
       "slug": slug.current,
       youtubeId,
-      description
+      description,
+      featuredImage
     }
   `);
   

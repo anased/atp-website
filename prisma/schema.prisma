@@ -36,17 +36,20 @@ model Session {
 }
 
 model User {
-  id            String      @id @default(cuid())
-  name          String?
-  email         String?     @unique
-  emailVerified DateTime?
-  password      String?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-  membership    Membership?
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  id                String                  @id @default(cuid())
+  name              String?
+  email             String?                 @unique
+  emailVerified     DateTime?
+  password          String?
+  image             String?
+  accounts          Account[]
+  sessions          Session[]
+  membership        Membership?
+  viewingHistory    ViewingHistory[] // Add this relation field
+  bookmarks         Bookmark[] // Add this relation field
+  notificationPrefs NotificationPreference? // Add this relation field
+  createdAt         DateTime                @default(now())
+  updatedAt         DateTime                @updatedAt
 }
 
 model VerificationToken {
@@ -58,14 +61,55 @@ model VerificationToken {
 }
 
 model Membership {
-  id                  String    @id @default(cuid())
-  userId              String    @unique
-  stripeCustomerId    String?   @unique
+  id                   String    @id @default(cuid())
+  userId               String    @unique
+  stripeCustomerId     String?   @unique
   stripeSubscriptionId String?
-  active              Boolean   @default(false)
-  currentPeriodEnd    DateTime?
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
-  
+  active               Boolean   @default(false)
+  currentPeriodEnd     DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// New models for supporting account features
+
+model ViewingHistory {
+  id        String   @id @default(cuid())
+  userId    String
+  videoId   String
+  watchedAt DateTime @default(now())
+  progress  Int? // Video progress in seconds
+  completed Boolean  @default(false)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, videoId])
+  @@index([userId])
+  @@index([videoId])
+}
+
+model Bookmark {
+  id        String   @id @default(cuid())
+  userId    String
+  videoId   String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, videoId])
+  @@index([userId])
+}
+
+model NotificationPreference {
+  id                  String  @id @default(cuid())
+  userId              String  @unique
+  newContent          Boolean @default(true)
+  productUpdates      Boolean @default(true)
+  promotions          Boolean @default(false)
+  membershipReminders Boolean @default(true)
+  newsletter          Boolean @default(true)
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

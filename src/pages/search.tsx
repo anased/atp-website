@@ -1,4 +1,5 @@
 // src/pages/search.tsx
+// Also update the search page to include featuredImage in queries
 import { useState, useEffect } from 'react';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
@@ -35,7 +36,8 @@ export default function SearchPage({ initialResults, query }: SearchPageProps) {
           title,
           "slug": slug.current,
           youtubeId,
-          description
+          description,
+          featuredImage
         }`;
         
         const searchResults = await client.fetch(searchQuery, { 
@@ -110,7 +112,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     title,
     "slug": slug.current,
     youtubeId,
-    description
+    description,
+    featuredImage
   }`;
   
   const results = await client.fetch(searchQuery, { 

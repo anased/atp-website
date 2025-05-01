@@ -1,5 +1,6 @@
+// src/components/video/VideoGrid.tsx
 import Link from 'next/link';
-import Image from 'next/image';
+import { urlFor } from '@/sanity/lib/image';
 
 interface Video {
   _id: string;
@@ -7,6 +8,7 @@ interface Video {
   slug: string;
   youtubeId: string;
   description?: string;
+  featuredImage?: any;
 }
 
 interface VideoGridProps {
@@ -28,21 +30,37 @@ interface VideoCardProps {
 }
 
 function VideoCard({ video }: VideoCardProps) {
-  // Create a video thumbnail URL from YouTube video ID
-  const thumbnailUrl = `https://img.youtube.com/vi/${video.youtubeId}/mqdefault.jpg`;
+  // Get the YouTube thumbnail URL as a fallback
+  const youtubeThumbUrl = `https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`;
+  
+  // First try to use the Sanity featuredImage with proper error handling
+  let thumbnailUrl = youtubeThumbUrl;
+  
+  try {
+    if (video.featuredImage) {
+      thumbnailUrl = urlFor(video.featuredImage).width(800).url();
+    }
+  } catch (error) {
+    console.error("Error generating Sanity image URL:", error);
+    // Fallback to YouTube thumbnail if there's an error
+  }
   
   return (
     <Link href={`/videos/${video.slug}`} className="group block rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-200">
       <div className="relative aspect-video">
-        <Image 
+        {/* The actual image */}
+        <img 
           src={thumbnailUrl}
           alt={video.title}
-          fill
-          className="object-cover transition-transform duration-200 group-hover:scale-105"
+          className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
         />
-        <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center">
+        
+        {/* Play button overlay - with completely transparent background */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          {/* Play button icon - only visible on hover */}
           <svg 
-            className="w-12 h-12 text-white opacity-80 group-hover:opacity-100 transition-opacity duration-200" 
+            className="w-12 h-12 text-white opacity-0 group-hover:opacity-80
+                      transition-opacity duration-200 drop-shadow-[0_0_3px_rgba(0,0,0,0.7)]" 
             fill="currentColor" 
             viewBox="0 0 24 24"
           >
