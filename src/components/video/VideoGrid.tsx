@@ -1,6 +1,8 @@
 // src/components/video/VideoGrid.tsx
 import Link from 'next/link';
 import { urlFor } from '@/sanity/lib/image';
+import { SanityImageSource } from '@sanity/image-url/lib/types/types';
+
 
 interface Video {
   _id: string;
@@ -8,7 +10,7 @@ interface Video {
   slug: string;
   youtubeId: string;
   description?: string;
-  featuredImage?: any;
+  featuredImage?: SanityImageSource;
 }
 
 interface VideoGridProps {
